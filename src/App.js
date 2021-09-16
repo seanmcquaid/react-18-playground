@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import Transition from './Transition';
 // import { flushSync } from 'react-dom';
 
 function fetchSomething() {
@@ -41,6 +42,7 @@ function App() {
     <div>
       <button onClick={handleClick}>Next</button>
       <h1 style={{ color: flag ? 'blue' : 'black' }}>{count}</h1>
+      <Transition />
     </div>
   );
 }
