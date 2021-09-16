@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
+// import { flushSync } from 'react-dom';
 
 function fetchSomething() {
   return new Promise((res, rej) => {
     setTimeout(() => {
-      console.log('fetching');
+      res(console.log('fetching'));
     }, 3000);
   });
 }
