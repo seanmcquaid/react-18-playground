@@ -1,30 +1,28 @@
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect, useDeferredValue } from 'react';
 
 const getUrl = (term) =>
   `https://itunes.apple.com/search?term=${term}&country=us`;
 
-const Transition = () => {
-  const [query, setQuery] = useState('');
+const List = ({ query }) => {
   const [results, setResults] = useState([]);
   const [isPending, startTransition] = useTransition({
     timeoutMs: 5000,
   });
 
-  const onChange = (event) => {
-    const value = event.target.value;
-    setQuery(value);
-    startTransition(() => {
-      fetch(getUrl(value)).then((response) => {
-        response.json().then((json) => {
-          setResults(json.results);
+  useEffect(() => {
+    if (query.length) {
+      startTransition(() => {
+        fetch(getUrl(query)).then((response) => {
+          response.json().then((json) => {
+            setResults(json.results);
+          });
         });
       });
-    });
-  };
+    }
+  }, [query, startTransition]);
 
   return (
-    <div>
-      <input value={query} onChange={onChange} />
+    <>
       {isPending && <p>Pending</p>}
       <ul>
         {results.map((result, i) => (
@@ -34,6 +32,23 @@ const Transition = () => {
           </li>
         ))}
       </ul>
+    </>
+  );
+};
+
+const Transition = () => {
+  const [query, setQuery] = useState('');
+  const deferredQuery = useDeferredValue(query, { timeoutMs: 5000 });
+
+  const onChange = (event) => {
+    const value = event.target.value;
+    setQuery(value);
+  };
+
+  return (
+    <div>
+      <input value={query} onChange={onChange} />
+      <List query={deferredQuery} />
     </div>
   );
 };
